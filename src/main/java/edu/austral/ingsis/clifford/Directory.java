@@ -134,7 +134,7 @@ public final class Directory implements FileSystem{
         }
 
         if(find(directory_name).isPresent()){
-            return new Error("A file or directory with name '" + directory_name + "' already exists");
+            return new Error("A directory with name '" + directory_name + "' already exists");
         }
 
         Directory newDir = new Directory(directory_name, this);
