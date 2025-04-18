@@ -124,7 +124,19 @@ public final class Directory implements FileSystem{
 
     @Override
     public Result touchCommand(String file_name) {
-        return new Error("Operation not supported");
+        if(file_name.contains("/") || file_name.contains(" ")){
+            return new Error("Invalid file name: must not contain '/' or spaces");
+        }
+
+        if(getParent().find(file_name).isPresent()){
+            return new Error("A file with name '" + file_name + "' already exists");
+        }
+
+        File newFile = new File(file_name, parent);
+        getParent().addItem(newFile);
+
+        return new Success<>("'" + file_name + "' file created");
+
     }
 
     @Override
@@ -158,6 +170,12 @@ public final class Directory implements FileSystem{
                 return new Error("Cannot remove directory '"+ file_or_dir_name + "' without --recursive" );
             }
         }
+
+        if(target instanceof File){
+            // fixme: fijate de no alterar la lista original.
+            parent.getItems().remove(target);
+        }
+
         // fixme: estoy alterando los items originales. Quiza conviene crear una nueva instancia de items.
         items.remove(target);
         return new Success<>("'" + file_or_dir_name + "' removed");
