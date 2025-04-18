@@ -32,12 +32,12 @@ public final class File implements FileSystem{
     }
 
     @Override
-    public String rmCommand(String file_or_dir_name, Flag flag) {
-        return "";
+    public Result rmCommand(String file_or_dir_name, Flag flag) {
+        return null;
     }
 
     @Override
-    public String pwdCommand() {
-        return "";
+    public Result pwdCommand() {
+        return null;
     }
 }

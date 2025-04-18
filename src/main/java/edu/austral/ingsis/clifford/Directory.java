@@ -165,6 +165,14 @@ public final class Directory implements FileSystem{
 
     @Override
     public Result pwdCommand() {
-        return null;
+        List<String> pathParts = new ArrayList<>();
+        Directory current = this;
+
+        while(current != null){
+            pathParts.add(current.getName());
+            current = current.getParent();
+        }
+
+        return new Success<>(String.join("/", pathParts));
     }
 }
