@@ -35,6 +35,7 @@ public class FileSystemTests {
             entry("ls --ord=asc", "emily horace")));
   }
 
+  // fixme: NullPointerException
   @Test
   void test2() {
     executeTest(
@@ -50,6 +51,7 @@ public class FileSystemTests {
             entry("ls", "elizabeth.txt t-bone")));
   }
 
+  // fixme: NullPointerException
   @Test
   void test3() {
     executeTest(
@@ -95,6 +97,8 @@ public class FileSystemTests {
     executeTest(List.of(entry("cd ..", "moved to directory '/'")));
   }
 
+
+  // fixme: NullPointerException
   @Test
   void test7() {
     executeTest(
@@ -108,6 +112,8 @@ public class FileSystemTests {
             entry("ls", "jetta.txt")));
   }
 
+
+  // fixme: NullPointerException
   @Test
   void test8() {
     executeTest(
