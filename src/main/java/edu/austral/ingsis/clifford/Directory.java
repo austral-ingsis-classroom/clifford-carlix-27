@@ -1,20 +1,24 @@
 package edu.austral.ingsis.clifford;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class Directory implements FileSystem{
     private final String name;
-    private final Directory parent; //
+    private final Directory parent;
     private final List<FileSystem> items;
 
-    public Directory(String name, Directory parent) {
+
+    // Constructor for items
+    public Directory(String name, Directory parent, List<FileSystem> items) {
         this.name = name;
         this.parent = parent;
-        this.items = new ArrayList<>();
+        this.items = new ArrayList<>(items);
+    }
+
+    // Constructor for an empty directory
+    public Directory(String name, Directory parent) {
+        this(name, parent, new ArrayList<>());
     }
 
     public String getName() {
@@ -29,11 +33,20 @@ public final class Directory implements FileSystem{
         return items;
     }
 
-    public void addItem(FileSystem item) {
-        items.add(item);
+
+    private Directory addItem(FileSystem item) {
+        List<FileSystem> newItems = new ArrayList<>(this.items);
+        newItems.add(item);
+        return new Directory(this.name, this.parent, newItems);
     }
 
-    public Optional<FileSystem> find(String name) {
+    private Directory removeItem(FileSystem item) {
+        List<FileSystem> newItems = new ArrayList<>(this.items);
+        newItems.remove(item);
+        return new Directory(this.name, this.parent, newItems);
+    }
+
+    private Optional<FileSystem> find(String name) {
         return items.stream()
                 .filter(fs -> {
                     if (fs instanceof Directory d) return d.getName().equals(name);
@@ -42,38 +55,50 @@ public final class Directory implements FileSystem{
                 }).findFirst();
     }
 
+
+    // return new Success(new Directory(this.name, this.parent, itemNames)(String.join(" "), itemNames))
     @Override
     public Result lsCommand(Flag flag) {
         if(items.isEmpty()) {
             return new Success<String>("");
         }
 
-        // Es una lista de FileSystem (items) porque puede ser tanto directorios como files
-        // output solo contiene los nombres de todos estos, como String y luego con la logica posterior se ordenarian
-        // todo: Hace que el nombre sea mas explicito de lo que esta haciendo
-        List<String> output = getOutput();
+        List<String> itemNames = getFileAndDirectoryNames();
 
+        Result flagResult = processSortingFlag(flag, itemNames);
 
-        // i dont like this logic. its garbage for this method. todo: (Extract to other private method)
-        if(flag != null){
-            if("--ord".equals(flag.getKey())){
-                String order = flag.getValue();
-                if("asc".equals(order)){
-                    output.sort(Comparator.naturalOrder());
-                } else if("desc".equals(order)){
-                    output.sort(Comparator.reverseOrder());
-                } else{
-                    return new Error("Invalid value to --ord: " + order);
-                }
-            } else{
-                return new Error("Unrecognized flag " + flag.getKey());
-            }
+        if(flagResult instanceof Error){
+            return flagResult;
         }
 
-        return new Success<String>(String.join(" ", output));
+        return new Success<String>(String.join(" ", itemNames));
     }
 
-    private List<String> getOutput() {
+    private static Result processSortingFlag(Flag flag, List<String> itemNames) {
+        if (flag == null) {
+            return new Success<>(""); // No flag to process
+        }
+
+        if (!"--ord".equals(flag.getKey())) {
+            return new Error("Unrecognized flag " + flag.getKey());
+        }
+
+        String order = flag.getValue();
+        switch (order) {
+            case "asc":
+                itemNames.sort(Comparator.naturalOrder());
+                break;
+            case "desc":
+                itemNames.sort(Comparator.reverseOrder());
+                break;
+            default:
+                return new Error("Invalid value to --ord: " + order);
+        }
+
+        return new Success<>("Sorting applied");
+    }
+
+    private List<String> getFileAndDirectoryNames() {
         return items.stream()
                 .map(fs -> {
                     if (fs instanceof Directory d) return d.getName();
@@ -82,6 +107,9 @@ public final class Directory implements FileSystem{
                 })
                 .collect(Collectors.toList());
     }
+
+
+
 
     @Override
     public Result cdCommand(String path) {
@@ -103,9 +131,8 @@ public final class Directory implements FileSystem{
             } else if (part.equals("..")) {
                 if (current.getParent() != null) {
                     current = current.getParent();
-                } // si ya estás en root, quedate
+                }
             } else {
-                // fixme: is absolutely necessary find method?
                 Optional<FileSystem> maybe = current.find(part);
                 if (maybe.isEmpty()) return new Error("Directory not found: " + part);
 
@@ -118,7 +145,7 @@ public final class Directory implements FileSystem{
             }
         }
 
-        return new Success<>("Moved to directory: '" + current.getName() + "'");
+        return new Success<>("Moved to directory: '" + current.getName() + "'", current);
 
     }
 
@@ -133,10 +160,12 @@ public final class Directory implements FileSystem{
         }
 
         File newFile = new File(file_name, parent);
-        getParent().addItem(newFile);
 
-        return new Success<>("'" + file_name + "' file created");
+        Directory newDirectory = this.addItem(newFile);
 
+        Directory updatedHierarchy = propagateChanges(newDirectory);
+
+        return new Success<>("'" + file_name + "' file created", updatedHierarchy);
     }
 
     @Override
@@ -150,10 +179,15 @@ public final class Directory implements FileSystem{
         }
 
         Directory newDir = new Directory(directory_name, this);
-        this.items.add(newDir);
 
-        return new Success<>("'" + newDir.getName() + "' directory created");
+        Directory newDirectory = this.addItem(newDir);
+
+        Directory updatedHierarchy = propagateChanges(newDirectory);
+
+
+        return new Success<>("'" + directory_name + "' directory created", updatedHierarchy);
     }
+
 
     @Override
     public Result rmCommand(String file_or_dir_name, Flag flag) {
@@ -171,14 +205,44 @@ public final class Directory implements FileSystem{
             }
         }
 
+        Directory newDirectory = this.removeItem(target);
+
+        Directory updatedHierarchy = propagateChanges(newDirectory);
+
         if(target instanceof File){
-            // fixme: fijate de no alterar la lista original.
-            parent.getItems().remove(target);
+            Directory newDirectoryWithFile = this.removeItem(target);
+            Directory updatedHierarchyWithFile = propagateChanges(newDirectoryWithFile);
+            return new Success<>("'" + file_or_dir_name + "' removed", updatedHierarchyWithFile);
         }
 
-        // fixme: estoy alterando los items originales. Quiza conviene crear una nueva instancia de items.
-        items.remove(target);
-        return new Success<>("'" + file_or_dir_name + "' removed");
+        return new Success<>("'" + file_or_dir_name + "' removed", updatedHierarchy);
+    }
+
+
+    private Directory propagateChanges(Directory changedDirectory){
+        if(changedDirectory.getParent() == null){
+            return changedDirectory;
+        }
+
+        Directory parent = changedDirectory.getParent();
+
+        Directory newParent = parent.replaceChild(this, changedDirectory);
+
+        return propagateChanges(newParent);
+    }
+
+    private Directory replaceChild(Directory oldChild, Directory newChild){
+        List<FileSystem> newItems = new ArrayList<>();
+
+        for(FileSystem item: this.items){
+            if(item.equals(oldChild)) {
+                newItems.add(newChild);
+            } else {
+                newItems.add(item);
+            }
+        }
+
+        return new Directory(this.name, this.parent, newItems);
     }
 
     @Override
@@ -190,6 +254,8 @@ public final class Directory implements FileSystem{
             pathParts.add(current.getName());
             current = current.getParent();
         }
+
+        // Invierte -> Posible caso a tener en cuenta
 
         return new Success<>(String.join("/", pathParts));
     }

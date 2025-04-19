@@ -55,6 +55,9 @@ public final class File implements FileSystem{
             current = current.getParent();
         }
 
+        // Invierte -> posible caso a tener en cuenta
+
+
         pathParts.add(name);
 
         return new Success<>(String.join("/", pathParts));
