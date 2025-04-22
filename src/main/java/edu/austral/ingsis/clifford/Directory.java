@@ -45,7 +45,7 @@ public final class Directory implements FileSystem {
   }
 
   private Optional<FileSystem> find(String name) {
-    if(items.isEmpty()) return Optional.empty();
+    if (items.isEmpty()) return Optional.empty();
 
     return items.stream()
         .filter(
@@ -132,11 +132,11 @@ public final class Directory implements FileSystem {
         if (current.getParent() != null) {
           current = current.getParent();
         } else {
-            // if parent == null, parent -> null. Root.
-            return new Success<>("moved to directory '" + "/" + "'");
+          // if parent == null, parent -> null. Root.
+          return new Success<>("moved to directory '" + "/" + "'");
         }
       } else {
-          // fixme: rompe aca con el path horace/jetta
+        // fixme: rompe aca con el path horace/jetta
         Optional<FileSystem> maybe = current.find(part);
         if (maybe.isEmpty()) return new Error("'" + part + "' directory does not exist");
 
@@ -200,7 +200,6 @@ public final class Directory implements FileSystem {
 
     FileSystem target = match.get();
 
-
     if (target instanceof Directory) {
       if (flag == null) {
         return new Error("Cannot remove '" + file_or_dir_name + "', is a directory");
@@ -256,7 +255,6 @@ public final class Directory implements FileSystem {
       pathParts.add(current.getName());
       current = current.getParent();
     }
-
 
     return new Success<>("/" + String.join("/", pathParts));
   }

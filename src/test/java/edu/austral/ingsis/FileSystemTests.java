@@ -35,7 +35,6 @@ public class FileSystemTests {
             entry("ls --ord=asc", "emily horace")));
   }
 
-
   @Test
   void test2() {
     executeTest(
@@ -50,7 +49,6 @@ public class FileSystemTests {
             entry("mkdir t-bone", "'t-bone' directory created"),
             entry("ls", "elizabeth.txt t-bone")));
   }
-
 
   @Test
   void test3() {
@@ -70,20 +68,20 @@ public class FileSystemTests {
             entry("ls", "")));
   }
 
-//  // fixme: ultimos 3 casos rompe todo
-//  @Test
-//  void test4() {
-//    executeTest(
-//        List.of(
-//            entry("mkdir horace", "'horace' directory created"),
-//            entry("mkdir emily", "'emily' directory created"),
-//            entry("cd horace", "moved to directory 'horace'"),
-//            entry("mkdir jetta", "'jetta' directory created"),
-//            entry("cd ..", "moved to directory '/'"),
-//            entry("cd horace/jetta", "moved to directory 'jetta'"),
-//            entry("pwd", "/horace/jetta"),
-//            entry("cd /", "moved to directory '/'")));
-//  }
+  //  // fixme: ultimos 3 casos rompe todo
+  //  @Test
+  //  void test4() {
+  //    executeTest(
+  //        List.of(
+  //            entry("mkdir horace", "'horace' directory created"),
+  //            entry("mkdir emily", "'emily' directory created"),
+  //            entry("cd horace", "moved to directory 'horace'"),
+  //            entry("mkdir jetta", "'jetta' directory created"),
+  //            entry("cd ..", "moved to directory '/'"),
+  //            entry("cd horace/jetta", "moved to directory 'jetta'"),
+  //            entry("pwd", "/horace/jetta"),
+  //            entry("cd /", "moved to directory '/'")));
+  //  }
 
   @Test
   void test5() {
@@ -98,7 +96,6 @@ public class FileSystemTests {
     executeTest(List.of(entry("cd ..", "moved to directory '/'")));
   }
 
-
   @Test
   void test7() {
     executeTest(
@@ -111,7 +108,6 @@ public class FileSystemTests {
             entry("rm emily.txt", "'emily.txt' removed"),
             entry("ls", "jetta.txt")));
   }
-
 
   // fixme
   @Test
