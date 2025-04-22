@@ -45,6 +45,8 @@ public final class Directory implements FileSystem {
   }
 
   private Optional<FileSystem> find(String name) {
+    if(items.isEmpty()) return Optional.empty();
+
     return items.stream()
         .filter(
             fs -> {
@@ -129,8 +131,12 @@ public final class Directory implements FileSystem {
       } else if (part.equals("..")) {
         if (current.getParent() != null) {
           current = current.getParent();
+        } else {
+            // if parent == null, parent -> null. Root.
+            return new Success<>("moved to directory '" + "/" + "'");
         }
       } else {
+          // fixme: rompe aca con el path horace/jetta
         Optional<FileSystem> maybe = current.find(part);
         if (maybe.isEmpty()) return new Error("'" + part + "' directory does not exist");
 
@@ -152,7 +158,7 @@ public final class Directory implements FileSystem {
       return new Error("Invalid file name: must not contain '/' or spaces");
     }
 
-    if (getParent().find(file_name).isPresent()) {
+    if (find(file_name).isPresent()) {
       return new Error("A file with name '" + file_name + "' already exists");
     }
 
@@ -175,9 +181,9 @@ public final class Directory implements FileSystem {
       return new Error("A directory with name '" + directory_name + "' already exists");
     }
 
-    Directory newDir = new Directory(directory_name, this);
+    Directory newDir = new Directory(directory_name, this.parent);
 
-    Directory newDirectory = this.addItem(newDir);
+    Directory newDirectory = addItem(newDir);
 
     Directory updatedHierarchy = propagateChanges(newDirectory);
 
@@ -194,9 +200,10 @@ public final class Directory implements FileSystem {
 
     FileSystem target = match.get();
 
+
     if (target instanceof Directory) {
-      if (flag == null || "--recursive".equals(flag.getKey())) {
-        return new Error("Cannot remove directory '" + file_or_dir_name + "' without --recursive");
+      if (flag == null) {
+        return new Error("Cannot remove '" + file_or_dir_name + "', is a directory");
       }
     }
 
@@ -204,6 +211,7 @@ public final class Directory implements FileSystem {
 
     Directory updatedHierarchy = propagateChanges(newDirectory);
 
+    // todo: chequeate esto pero despues por las dudas, fijate el test8.
     if (target instanceof File) {
       Directory newDirectoryWithFile = this.removeItem(target);
       Directory updatedHierarchyWithFile = propagateChanges(newDirectoryWithFile);
@@ -249,8 +257,7 @@ public final class Directory implements FileSystem {
       current = current.getParent();
     }
 
-    // Invierte -> Posible caso a tener en cuenta
 
-    return new Success<>(String.join("/", pathParts));
+    return new Success<>("/" + String.join("/", pathParts));
   }
 }

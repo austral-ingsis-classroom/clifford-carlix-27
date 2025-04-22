@@ -13,8 +13,8 @@ public class FileSystemRunnerImpl implements FileSystemRunner {
   @Override
   public List<String> executeCommands(List<String> commands) {
     List<String> results = new ArrayList<>();
-    Directory root = new Directory("/", null); // Root directory
-    Directory current = root;
+      Directory current = new Directory("/", null);
+
 
     for (String command : commands) {
       String[] parts = command.trim().split("\\s+");
@@ -57,6 +57,11 @@ public class FileSystemRunnerImpl implements FileSystemRunner {
             }
             default -> throw new IllegalArgumentException("Unexpected value: " + baseCmd);
           };
+
+
+      if (result instanceof Success<?> s && s.getValue() instanceof Directory dir) {
+            current = dir;
+      }
 
       String output = formatResult(result);
       results.add(output);
