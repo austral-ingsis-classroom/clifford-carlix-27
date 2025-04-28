@@ -8,7 +8,10 @@ public final class Cd implements Command{
     @Override
     public Result execute(String input, FileSystem fileSystem) {
         String path = extractPath(input);
-        Operation operation = new ChangeDirectory(Optional.of(path));
+        if(path.isEmpty()){
+            return new Error("Path is empty");
+        }
+        Operation operation = new ChangeDirectory(path);
         return fileSystem.apply(operation);
     }
 

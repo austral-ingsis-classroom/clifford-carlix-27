@@ -4,17 +4,14 @@ import java.util.Optional;
 
 public final class ChangeDirectory implements Operation{
 
-    private final Optional<String> path;
+    private final String path;
 
-    public ChangeDirectory(final Optional<String> path) {
+    public ChangeDirectory(final String path) {
         this.path = path;
     }
 
     @Override
     public Result applyTo(Directory directory) {
-        if(path.isEmpty()){
-            return new Error("Path is empty");
-        }
 
         Directory startDirectory = getDirectory(directory);
 
@@ -23,7 +20,7 @@ public final class ChangeDirectory implements Operation{
     }
 
     private Directory getDirectory(Directory directory) {
-        return path.get().startsWith("/") ? goToRoot(directory) : directory;
+        return path.startsWith("/") ? goToRoot(directory) : directory;
     }
 
     @Override
@@ -41,11 +38,10 @@ public final class ChangeDirectory implements Operation{
     }
 
 
-    private Result navigatePath(final Directory start, final Optional<String> rawPath) {
+    private Result navigatePath(final Directory start, final String rawPath) {
         Directory current = start;
 
-        if (rawPath.isPresent()) {
-            String[] parts = rawPath.get().split("/");
+            String[] parts = rawPath.split("/");
 
             for (String part : parts) {
                 if (part.isEmpty() || part.equals(".")) {
@@ -66,7 +62,7 @@ public final class ChangeDirectory implements Operation{
                 }
                 return new Error("'" + part + "' is a file, not a directory");
             }
-        }
+
         return new Success<>("moved to directory '" + current.getName() + "'", current);
     }
 }
