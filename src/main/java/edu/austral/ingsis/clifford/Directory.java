@@ -65,10 +65,10 @@ public final class Directory implements FileSystem {
         return newParent.propagateChange();
     }
 
-  // TODO()
+
   @Override
   public Result apply(Operation operation) {
-      return null;
+      return operation.applyTo(this);
   }
 
 

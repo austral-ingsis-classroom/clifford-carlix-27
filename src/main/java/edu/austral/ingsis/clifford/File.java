@@ -1,7 +1,5 @@
 package edu.austral.ingsis.clifford;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public final class File implements FileSystem {
   private final String name;
@@ -20,6 +18,10 @@ public final class File implements FileSystem {
     return parent;
   }
 
+  @Override
+  public Result apply(Operation operation) {
+      return operation.applyTo(this);
+  }
 
 //
 //  @Override
@@ -39,8 +41,4 @@ public final class File implements FileSystem {
 //    return new Success<>(String.join("/", pathParts));
 //  }
 
-    @Override
-    public Result apply(Operation operation) {
-        return null;
-    }
 }
