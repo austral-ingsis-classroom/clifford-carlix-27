@@ -1,8 +1,6 @@
 package edu.austral.ingsis.clifford;
 
 
-import java.util.Optional;
-
 public final class Cd implements Command{
 
     @Override
