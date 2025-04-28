@@ -3,7 +3,7 @@ package edu.austral.ingsis.clifford;
 import java.util.Optional;
 
 public final class CommandUtils {
-    private CommandUtils() {} // No instanciable
+    private CommandUtils() {}
 
     public static Optional<Flag> parseFlag(String input) {
         String[] parts = input.trim().split("\\s+");

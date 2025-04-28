@@ -2,14 +2,13 @@ package edu.austral.ingsis.clifford;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class ListItems implements Operation{
 
-    private final Optional<Flag> flag;
+    private final Flag flag;
 
-    public ListItems(Optional<Flag> flag) {
+    public ListItems(Flag flag) {
         this.flag = flag;
     }
 
@@ -38,16 +37,13 @@ public final class ListItems implements Operation{
                 .collect(Collectors.toList());
     }
 
-    private static Result processSortingFlag(Optional<Flag> flag, List<String> itemNames) {
-        if (flag.isEmpty()) {
-            return new Success<>(""); // No flag to process
+    private static Result processSortingFlag(Flag flag, List<String> itemNames) {
+
+        if (!"--ord".equals(flag.getKey())) {
+            return new Error("Unrecognized flag " + flag.getKey());
         }
 
-        if (!"--ord".equals(flag.get().getKey())) {
-            return new Error("Unrecognized flag " + flag.get().getKey());
-        }
-
-        String order = flag.get().getValue();
+        String order = flag.getValue();
         switch (order) {
             case "asc":
                 itemNames.sort(Comparator.naturalOrder());

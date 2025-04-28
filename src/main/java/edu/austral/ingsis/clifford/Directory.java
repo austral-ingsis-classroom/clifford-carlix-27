@@ -111,36 +111,7 @@ public final class Directory implements FileSystem {
     return new Success<>("'" + directory_name + "' directory created", updatedHierarchy);
   }
 
-  @Override
-  public Result rmCommand(String file_or_dir_name, Flag flag) {
-    Optional<FileSystem> match = find(file_or_dir_name);
-
-    if (match.isEmpty()) {
-      return new Error("Directory not found: " + file_or_dir_name);
-    }
-
-    FileSystem target = match.get();
-
-    if (target instanceof Directory) {
-      if (flag == null) {
-        return new Error("Cannot remove '" + file_or_dir_name + "', is a directory");
-      }
-    }
-
-    Directory newDirectory = this.removeItem(target);
-
-    Directory updatedHierarchy = propagateChanges(newDirectory);
-
-    // todo: chequeate esto pero despues por las dudas, fijate el test8.
-    if (target instanceof File) {
-      Directory newDirectoryWithFile = this.removeItem(target);
-      Directory updatedHierarchyWithFile = propagateChanges(newDirectoryWithFile);
-      return new Success<>("'" + file_or_dir_name + "' removed", updatedHierarchyWithFile);
-    }
-
-    return new Success<>("'" + file_or_dir_name + "' removed", updatedHierarchy);
-  }
-
+  
   public Directory propagateChanges(Directory changedDirectory) {
     if (changedDirectory.getParent() == null) {
       return changedDirectory;
