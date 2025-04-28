@@ -20,45 +20,27 @@ public final class File implements FileSystem {
     return parent;
   }
 
-  @Override
-  public Result lsCommand(Flag flag) {
-    return new Error("Operation not supported");
-  }
 
-  @Override
-  public Result cdCommand(String directory_name) {
-    return new Error("Operation not supported");
-  }
+//
+//  @Override
+//  public Result pwdCommand() {
+//    List<String> pathParts = new ArrayList<>();
+//    Directory current = parent;
+//
+//    while (current != null) {
+//      pathParts.add(current.getName());
+//      current = current.getParent();
+//    }
+//
+//    // Invierte -> posible caso a tener en cuenta
+//
+//    pathParts.add(name);
+//
+//    return new Success<>(String.join("/", pathParts));
+//  }
 
-  @Override
-  public Result touchCommand(String file_name) {
-    return new Error("Operation not supported");
-  }
-
-  @Override
-  public Result mkDirCommand(String directory_name) {
-    return new Error("Operation not supported");
-  }
-
-  @Override
-  public Result rmCommand(String file_name, Flag flag) {
-    return new Error("Operation not supported");
-  }
-
-  @Override
-  public Result pwdCommand() {
-    List<String> pathParts = new ArrayList<>();
-    Directory current = parent;
-
-    while (current != null) {
-      pathParts.add(current.getName());
-      current = current.getParent();
+    @Override
+    public Result apply(Operation operation) {
+        return null;
     }
-
-    // Invierte -> posible caso a tener en cuenta
-
-    pathParts.add(name);
-
-    return new Success<>(String.join("/", pathParts));
-  }
 }

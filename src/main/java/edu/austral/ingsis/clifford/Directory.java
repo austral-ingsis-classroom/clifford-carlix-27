@@ -32,19 +32,19 @@ public final class Directory implements FileSystem {
     return items;
   }
 
-  private Directory addItem(FileSystem item) {
+  public Directory addItem(FileSystem item) {
     List<FileSystem> newItems = new ArrayList<>(this.items);
     newItems.add(item);
     return new Directory(this.name, this.parent, newItems);
   }
 
-  private Directory removeItem(FileSystem item) {
+  public Directory removeItem(FileSystem item) {
     List<FileSystem> newItems = new ArrayList<>(this.items);
     newItems.remove(item);
     return new Directory(this.name, this.parent, newItems);
   }
 
-  private Optional<FileSystem> find(String name) {
+  public Optional<FileSystem> find(String name) {
     if (items.isEmpty()) return Optional.empty();
 
     return items.stream()
@@ -57,59 +57,12 @@ public final class Directory implements FileSystem {
         .findFirst();
   }
 
-  // return new Success(new Directory(this.name, this.parent, itemNames)(String.join(" "),
-  // itemNames))
+  // TODO()
   @Override
-  public Result lsCommand(Flag flag) {
-    if (items.isEmpty()) {
-      return new Success<String>("");
-    }
-
-    List<String> itemNames = getFileAndDirectoryNames();
-
-    Result flagResult = processSortingFlag(flag, itemNames);
-
-    if (flagResult instanceof Error) {
-      return flagResult;
-    }
-
-    return new Success<String>(String.join(" ", itemNames));
+  public Result apply(Operation operation) {
+      return null;
   }
 
-  private static Result processSortingFlag(Flag flag, List<String> itemNames) {
-    if (flag == null) {
-      return new Success<>(""); // No flag to process
-    }
-
-    if (!"--ord".equals(flag.getKey())) {
-      return new Error("Unrecognized flag " + flag.getKey());
-    }
-
-    String order = flag.getValue();
-    switch (order) {
-      case "asc":
-        itemNames.sort(Comparator.naturalOrder());
-        break;
-      case "desc":
-        itemNames.sort(Comparator.reverseOrder());
-        break;
-      default:
-        return new Error("Invalid value to --ord: " + order);
-    }
-
-    return new Success<>("Sorting applied");
-  }
-
-  private List<String> getFileAndDirectoryNames() {
-    return items.stream()
-        .map(
-            fs -> {
-              if (fs instanceof Directory d) return d.getName();
-              else if (fs instanceof File f) return f.getName();
-              else return "";
-            })
-        .collect(Collectors.toList());
-  }
 
   @Override
   public Result cdCommand(String path) {
@@ -220,7 +173,7 @@ public final class Directory implements FileSystem {
     return new Success<>("'" + file_or_dir_name + "' removed", updatedHierarchy);
   }
 
-  private Directory propagateChanges(Directory changedDirectory) {
+  public Directory propagateChanges(Directory changedDirectory) {
     if (changedDirectory.getParent() == null) {
       return changedDirectory;
     }
@@ -232,7 +185,7 @@ public final class Directory implements FileSystem {
     return propagateChanges(newParent);
   }
 
-  private Directory replaceChild(Directory oldChild, Directory newChild) {
+  public Directory replaceChild(Directory oldChild, Directory newChild) {
     List<FileSystem> newItems = new ArrayList<>();
 
     for (FileSystem item : this.items) {
@@ -246,16 +199,4 @@ public final class Directory implements FileSystem {
     return new Directory(this.name, this.parent, newItems);
   }
 
-  @Override
-  public Result pwdCommand() {
-    List<String> pathParts = new ArrayList<>();
-    Directory current = this;
-
-    while (current != null) {
-      pathParts.add(current.getName());
-      current = current.getParent();
-    }
-
-    return new Success<>("/" + String.join("/", pathParts));
-  }
 }
