@@ -1,7 +1,8 @@
 package edu.austral.ingsis.clifford;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public final class Directory implements FileSystem {
   private final String name;
@@ -71,47 +72,6 @@ public final class Directory implements FileSystem {
       return operation.applyTo(this);
   }
 
-
-  @Override
-  public Result cdCommand(String path) {
-    if (path == null || path.isEmpty()) return new Error("Path is empty");
-
-    Directory current = this;
-
-    String[] parts = path.split("/");
-
-    if (path.startsWith("/")) {
-      while (current.getParent() != null) {
-        current = current.getParent();
-      }
-    }
-
-    for (String part : parts) {
-      if (part.equals(".") || part.isEmpty()) {
-        continue;
-      } else if (part.equals("..")) {
-        if (current.getParent() != null) {
-          current = current.getParent();
-        } else {
-          // if parent == null, parent -> null. Root.
-          return new Success<>("moved to directory '" + "/" + "'");
-        }
-      } else {
-        // fixme: rompe aca con el path horace/jetta
-        Optional<FileSystem> maybe = current.find(part);
-        if (maybe.isEmpty()) return new Error("'" + part + "' directory does not exist");
-
-        FileSystem fs = maybe.get();
-        if (fs instanceof Directory d) {
-          current = d;
-        } else {
-          return new Error("'" + part + "' is a file, not a directory");
-        }
-      }
-    }
-
-    return new Success<>("moved to directory '" + current.getName() + "'", current);
-  }
 
   @Override
   public Result touchCommand(String file_name) {
@@ -203,7 +163,6 @@ public final class Directory implements FileSystem {
         newItems.add(item);
       }
     }
-
     return new Directory(this.name, this.parent, newItems);
   }
 
