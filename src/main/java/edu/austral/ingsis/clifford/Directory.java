@@ -57,6 +57,14 @@ public final class Directory implements FileSystem {
         .findFirst();
   }
 
+    public Directory propagateChange() {
+        if (parent == null) {
+            return this;
+        }
+        Directory newParent = parent.replaceChild(this, this);
+        return newParent.propagateChange();
+    }
+
   // TODO()
   @Override
   public Result apply(Operation operation) {
