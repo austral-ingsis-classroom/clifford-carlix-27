@@ -2,7 +2,6 @@ package edu.austral.ingsis.clifford;
 
 import java.util.List;
 
-// todo: es la misma logica para FileSystemRunnerImpl
 public final class CommandRunner {
     private final List<Command> commands;
 

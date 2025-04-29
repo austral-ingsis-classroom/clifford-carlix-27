@@ -19,7 +19,7 @@ public final class CreateDirectory implements Operation{
 
         Directory dir = new Directory(directory.getName(), directory.getParent());
         Directory newDirectory = directory.addItem(dir);
-        Directory updatedHierarchy = newDirectory.propagateChange();
+        Directory updatedHierarchy = directory.propagateChanges(newDirectory); // if fails propagateChange()
         return new Success<>("'" + directory.getName() + "' directory created", updatedHierarchy);
     }
 

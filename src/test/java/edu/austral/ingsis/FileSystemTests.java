@@ -1,17 +1,26 @@
 package edu.austral.ingsis;
 
-import static java.util.Map.entry;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import edu.austral.ingsis.clifford.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
+
+import static java.util.Map.entry;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileSystemTests {
 
   // private final FileSystemRunner runner = commands -> List.of();
 
-  private final FileSystemRunner runner = new FileSystemRunnerImpl();
+  private final FileSystemRunner runner = new FileSystemRunnerImpl(List.of(
+          new Ls(),
+          new MkDir(),
+          new Cd(),
+          new Pwd(),
+          new Touch(),
+          new Rm()
+  ));
 
   private void executeTest(List<Map.Entry<String, String>> commandsAndResults) {
     final List<String> commands = commandsAndResults.stream().map(Map.Entry::getKey).toList();
@@ -68,20 +77,20 @@ public class FileSystemTests {
             entry("ls", "")));
   }
 
-  //  // fixme: ultimos 3 casos rompe todo
-  //  @Test
-  //  void test4() {
-  //    executeTest(
-  //        List.of(
-  //            entry("mkdir horace", "'horace' directory created"),
-  //            entry("mkdir emily", "'emily' directory created"),
-  //            entry("cd horace", "moved to directory 'horace'"),
-  //            entry("mkdir jetta", "'jetta' directory created"),
-  //            entry("cd ..", "moved to directory '/'"),
-  //            entry("cd horace/jetta", "moved to directory 'jetta'"),
-  //            entry("pwd", "/horace/jetta"),
-  //            entry("cd /", "moved to directory '/'")));
-  //  }
+
+    @Test
+    void test4() {
+      executeTest(
+          List.of(
+              entry("mkdir horace", "'horace' directory created"),
+              entry("mkdir emily", "'emily' directory created"),
+              entry("cd horace", "moved to directory 'horace'"),
+              entry("mkdir jetta", "'jetta' directory created"),
+              entry("cd ..", "moved to directory '/'"),
+              entry("cd horace/jetta", "moved to directory 'jetta'"),
+              entry("pwd", "/horace/jetta"),
+              entry("cd /", "moved to directory '/'")));
+    }
 
   @Test
   void test5() {

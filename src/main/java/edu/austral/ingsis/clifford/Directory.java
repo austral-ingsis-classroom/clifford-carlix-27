@@ -73,45 +73,6 @@ public final class Directory implements FileSystem {
   }
 
 
-  @Override
-  public Result touchCommand(String file_name) {
-    if (file_name.contains("/") || file_name.contains(" ")) {
-      return new Error("Invalid file name: must not contain '/' or spaces");
-    }
-
-    if (find(file_name).isPresent()) {
-      return new Error("A file with name '" + file_name + "' already exists");
-    }
-
-    File newFile = new File(file_name, parent);
-
-    Directory newDirectory = this.addItem(newFile);
-
-    Directory updatedHierarchy = propagateChanges(newDirectory);
-
-    return new Success<>("'" + file_name + "' file created", updatedHierarchy);
-  }
-
-  @Override
-  public Result mkDirCommand(String directory_name) {
-    if (directory_name.contains("/") || directory_name.contains(" ")) {
-      return new Error("Invalid directory name: must not contain '/' or spaces");
-    }
-
-    if (find(directory_name).isPresent()) {
-      return new Error("A directory with name '" + directory_name + "' already exists");
-    }
-
-    Directory newDir = new Directory(directory_name, this.parent);
-
-    Directory newDirectory = addItem(newDir);
-
-    Directory updatedHierarchy = propagateChanges(newDirectory);
-
-    return new Success<>("'" + directory_name + "' directory created", updatedHierarchy);
-  }
-
-  
   public Directory propagateChanges(Directory changedDirectory) {
     if (changedDirectory.getParent() == null) {
       return changedDirectory;
