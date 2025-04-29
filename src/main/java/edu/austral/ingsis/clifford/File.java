@@ -1,6 +1,5 @@
 package edu.austral.ingsis.clifford;
 
-
 public final class File implements FileSystem {
   private final String name;
   private final Directory parent;
@@ -20,7 +19,6 @@ public final class File implements FileSystem {
 
   @Override
   public Result apply(Operation operation) {
-      return operation.applyTo(this);
+    return operation.applyTo(this);
   }
-
 }

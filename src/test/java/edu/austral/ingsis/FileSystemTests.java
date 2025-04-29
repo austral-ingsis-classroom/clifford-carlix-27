@@ -13,14 +13,9 @@ public class FileSystemTests {
 
   // private final FileSystemRunner runner = commands -> List.of();
 
-  private final FileSystemRunner runner = new FileSystemRunnerImpl(List.of(
-          new Ls(),
-          new MkDir(),
-          new Cd(),
-          new Pwd(),
-          new Touch(),
-          new Rm()
-  ));
+  private final FileSystemRunner runner =
+      new FileSystemRunnerImpl(
+          List.of(new Ls(), new MkDir(), new Cd(), new Pwd(), new Touch(), new Rm()));
 
   private void executeTest(List<Map.Entry<String, String>> commandsAndResults) {
     final List<String> commands = commandsAndResults.stream().map(Map.Entry::getKey).toList();
@@ -31,8 +26,6 @@ public class FileSystemTests {
 
     assertEquals(expectedResult, actualResult);
   }
-
-
 
   @Test
   public void test1() {
@@ -46,13 +39,10 @@ public class FileSystemTests {
             entry("ls --ord=asc", "emily horace")));
   }
 
-
-
   // todo list
   // cd -> inmutabilidad
   // pwd -> inmutabilidad
   // touch
-
 
   @Test
   void test2() {
@@ -96,22 +86,22 @@ public class FileSystemTests {
   // cd
   // pwd
 
+  //    @Test
+  //    void test4() {
+  //      executeTest(
+  //          List.of(
+  //              entry("mkdir horace", "'horace' directory created"),
+  //              entry("mkdir emily", "'emily' directory created"),
+  //              entry("cd horace", "moved to directory 'horace'"),
+  //              entry("mkdir jetta", "'jetta' directory created"),
+  //              entry("cd ..", "moved to directory '/'"), // fixme: el error esta aca por no
+  // mantener los directorios anteriores
+  //              entry("cd horace/jetta", "moved to directory 'jetta'"),
+  //              entry("pwd", "/horace/jetta"),
+  //              entry("cd /", "moved to directory '/'")));
+  //    }
 
-//    @Test
-//    void test4() {
-//      executeTest(
-//          List.of(
-//              entry("mkdir horace", "'horace' directory created"),
-//              entry("mkdir emily", "'emily' directory created"),
-//              entry("cd horace", "moved to directory 'horace'"),
-//              entry("mkdir jetta", "'jetta' directory created"),
-//              entry("cd ..", "moved to directory '/'"), // fixme: el error esta aca por no mantener los directorios anteriores
-//              entry("cd horace/jetta", "moved to directory 'jetta'"),
-//              entry("pwd", "/horace/jetta"),
-//              entry("cd /", "moved to directory '/'")));
-//    }
-
-    // todo list
+  // todo list
 
   @Test
   void test5() {
@@ -125,7 +115,6 @@ public class FileSystemTests {
   void test6() {
     executeTest(List.of(entry("cd ..", "moved to directory '/'")));
   }
-
 
   // todo list
   // rm

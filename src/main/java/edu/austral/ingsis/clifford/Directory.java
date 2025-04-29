@@ -58,20 +58,18 @@ public final class Directory implements FileSystem {
         .findFirst();
   }
 
-    public Directory propagateChange() {
-        if (parent == null) {
-            return this;
-        }
-        Directory newParent = parent.replaceChild(this, this);
-        return newParent.propagateChange();
+  public Directory propagateChange() {
+    if (parent == null) {
+      return this;
     }
-
+    Directory newParent = parent.replaceChild(this, this);
+    return newParent.propagateChange();
+  }
 
   @Override
   public Result apply(Operation operation) {
-      return operation.applyTo(this);
+    return operation.applyTo(this);
   }
-
 
   // estos metodos deben dejar de existir aca. Se rompe el principio de S
   public Directory propagateChanges(Directory changedDirectory) {
@@ -98,5 +96,4 @@ public final class Directory implements FileSystem {
     }
     return new Directory(this.name, this.parent, newItems);
   }
-
 }
