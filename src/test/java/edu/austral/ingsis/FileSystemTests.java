@@ -48,6 +48,11 @@ public class FileSystemTests {
 
 
 
+  // todo list
+  // cd
+  // pwd
+  // ls en el ultimo en consecuencia del cd mal implementado.
+
   @Test
   void test2() {
     executeTest(
@@ -62,6 +67,11 @@ public class FileSystemTests {
             entry("mkdir t-bone", "'t-bone' directory created"),
             entry("ls", "elizabeth.txt t-bone")));
   }
+
+  // todo list
+  // cd
+  // rm
+  // rm --recursive
 
   @Test
   void test3() {
@@ -81,6 +91,10 @@ public class FileSystemTests {
             entry("ls", "")));
   }
 
+  // todo list
+  // cd
+  // pwd
+
 
     @Test
     void test4() {
@@ -96,6 +110,8 @@ public class FileSystemTests {
               entry("cd /", "moved to directory '/'")));
     }
 
+    // todo list
+
   @Test
   void test5() {
     executeTest(
@@ -108,6 +124,11 @@ public class FileSystemTests {
   void test6() {
     executeTest(List.of(entry("cd ..", "moved to directory '/'")));
   }
+
+
+  // todo list
+  // cd
+  // rm
 
   @Test
   void test7() {
@@ -122,7 +143,9 @@ public class FileSystemTests {
             entry("ls", "jetta.txt")));
   }
 
-  // fixme
+  // todo list
+  // cd
+  // rm
   @Test
   void test8() {
     executeTest(
