@@ -15,6 +15,7 @@ public final class Remove implements Operation{
     public Result applyTo(Directory directory) {
 
         String targetName = flag.getValue();
+        // fixme: look this! tenes que usar el FileSystemUTils. Aca hay que chequear si el targetName refiere a un Directory o File.
         Optional<FileSystem> maybeTarget = directory.find(targetName);
 
         if (maybeTarget.isEmpty()) {
@@ -28,9 +29,9 @@ public final class Remove implements Operation{
         }
 
         Directory updatedDirectory = directory.removeItem(target);
-        Directory updatedHierarchy = updatedDirectory.propagateChange();
+        // Directory updatedHierarchy = updatedDirectory.propagateChange();
 
-        return new Success<>("'" + targetName + "' removed", updatedHierarchy);
+        return new Success<>("'" + targetName + "' removed", updatedDirectory);
     }
 
     @Override

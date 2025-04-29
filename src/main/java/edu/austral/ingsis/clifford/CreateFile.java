@@ -1,5 +1,7 @@
 package edu.austral.ingsis.clifford;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public final class CreateFile implements Operation {
@@ -17,23 +19,33 @@ public final class CreateFile implements Operation {
             return new Error("Invalid file name: must not contain '/' or spaces");
         }
 
-        Optional<FileSystem> maybeExistingFile = directory.find(fileName);
+
+
+        // fixme: findFileByName funciona mal!
+        Optional<File> maybeExistingFile = FileSystemUtils.findFileByName(directory, fileName);
+
         if(maybeExistingFile.isPresent()) {
             return new Error("A file with name '" + fileName + "' already exists");
         }
 
         File newFile = new File(fileName, directory);
 
-        Directory newDirectory = directory.addItem(newFile);
+        Directory newDirectory = addFile(directory, newFile);
 
-        Directory updatedHierarchy = directory.propagateChanges(newDirectory);
-
-        return new Success<>("'" + fileName + "' file created", updatedHierarchy);
+        return new Success<>("'" + newFile.getName() + "' file created", newDirectory);
     }
 
     @Override
     public Result applyTo(File file) {
         return new Error("");
+    }
+
+    // todo: tiralo todo en FileSystemUtils
+
+    private Directory addFile(Directory directory, File file) {
+        List<FileSystem> newItems = new ArrayList<>(directory.getItems());
+        newItems.add(file);
+        return new Directory(directory.getName(), directory.getParent(), newItems);
     }
 
 }

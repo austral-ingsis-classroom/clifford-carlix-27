@@ -25,7 +25,7 @@ public final class ChangeDirectory implements Operation{
 
     @Override
     public Result applyTo(File file) {
-        return new Error("Cannot change a directory inside a file") ;
+        return new Error("'" + file.getName() + "' is a file, not a directory");
     }
 
 
@@ -39,7 +39,10 @@ public final class ChangeDirectory implements Operation{
 
 
     private Result navigatePath(final Directory start, final String rawPath) {
+        // todo: el current deberia ser una copia del start, y debe mantenerse inmutabilidad
         Directory current = start;
+
+        Directory foundDirectory = null;
 
             String[] parts = rawPath.split("/");
 
@@ -50,19 +53,25 @@ public final class ChangeDirectory implements Operation{
                 if (part.equals("..")) {
                     if (current.getParent() != null) {
                         current = current.getParent();
+                        foundDirectory = current;
                     } else{
                         return new Success<>("moved to directory '/'", current);
                     }
                     continue;
                 }
 
-                Optional<FileSystem> maybeFs = current.find(part);
-                if (maybeFs.isEmpty() || !(maybeFs.get() instanceof Directory)) {
+
+                Optional<Directory> maybeFs = FileSystemUtils.findDirectoryByName(current, part);
+                if (maybeFs.isEmpty()) {
                     return new Error("'" + part + "' directory does not exist");
                 }
-                return new Error("'" + part + "' is a file, not a directory");
+
+                foundDirectory = maybeFs.get();
             }
 
-        return new Success<>("moved to directory '" + current.getName() + "'", current);
+        assert foundDirectory != null;
+        return new Success<>("moved to directory '" + foundDirectory.getName() + "'", foundDirectory);
     }
+
+
 }

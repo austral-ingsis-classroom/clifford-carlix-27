@@ -18,13 +18,11 @@ public final class CreateDirectory implements Operation{
             return new Error("Invalid directory name: must not contain '/' or spaces");
         }
 
-        Directory newDir = new Directory(directoryName, directory); // el directorio que agrego
+        Directory newDir = new Directory(directoryName, directory);
 
-        Directory updatedDirectory = addDirectory(newDir, directory); // refleja los cambios
+        Directory updatedDirectory = addDirectory(newDir, directory);
 
-        Directory updatedHierarchy = propagateChanges(updatedDirectory); // contiene el estado de los directorios actuales
-
-        return new Success<>("'" + newDir.getName() + "' directory created", updatedHierarchy);
+        return new Success<>("'" + newDir.getName() + "' directory created", updatedDirectory);
     }
 
     @Override
@@ -32,32 +30,12 @@ public final class CreateDirectory implements Operation{
         return new Error("Cannot create a directory inside a file");
     }
 
+    // todo: tiralo todo en FileSystemUtils
+
     private Directory addDirectory(Directory dir, Directory parentDirectory) {
         List<FileSystem> newItems = new ArrayList<>(parentDirectory.getItems());
         newItems.add(dir);
         return new Directory(parentDirectory.getName(), parentDirectory.getParent(), newItems);
-    }
-
-    private Directory propagateChanges(Directory updatedChild) {
-        Directory parent = updatedChild.getParent();
-
-        if (parent == null) {
-            return updatedChild;
-        }
-
-        List<FileSystem> newParentItems = new ArrayList<>();
-
-        for (FileSystem item : parent.getItems()) {
-            if (item instanceof Directory dir && dir.getName().equals(updatedChild.getName())) {
-                newParentItems.add(updatedChild);
-            } else {
-                newParentItems.add(item);
-            }
-        }
-
-        Directory updatedParent = new Directory(parent.getName(), parent.getParent(), newParentItems);
-
-        return propagateChanges(updatedParent);
     }
 
 }
