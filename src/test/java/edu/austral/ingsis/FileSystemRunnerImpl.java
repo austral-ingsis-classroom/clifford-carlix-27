@@ -1,8 +1,7 @@
 package edu.austral.ingsis;
 
-import edu.austral.ingsis.clifford.Error;
 import edu.austral.ingsis.clifford.*;
-
+import edu.austral.ingsis.clifford.Error;
 import java.util.ArrayList;
 import java.util.List;
 
