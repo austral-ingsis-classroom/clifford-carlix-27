@@ -9,7 +9,8 @@ public final class Ls implements Command{
         Optional<Flag> maybeFlag = CommandUtils.parseFlag(input);
 
         if(maybeFlag.isEmpty()){
-            return new Error("Flag missing");
+            Operation operation = new ListItems(null);
+            return fileSystem.apply(operation);
         }
 
         Flag flag = maybeFlag.get();

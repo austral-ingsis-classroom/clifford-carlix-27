@@ -73,6 +73,7 @@ public final class Directory implements FileSystem {
   }
 
 
+  // estos metodos deben dejar de existir aca. Se rompe el principio de S
   public Directory propagateChanges(Directory changedDirectory) {
     if (changedDirectory.getParent() == null) {
       return changedDirectory;

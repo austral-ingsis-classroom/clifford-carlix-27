@@ -37,7 +37,7 @@ public class FileSystemRunnerImpl implements FileSystemRunner {
 
     private String formatResult(Result result) {
         if (result instanceof Success<?> success) {
-            return success.getValue().toString();
+            return success.getMessage();
         } else if (result instanceof Error error) {
             return error.getMessage();
         }

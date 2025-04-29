@@ -38,6 +38,9 @@ public final class ListItems implements Operation{
     }
 
     private static Result processSortingFlag(Flag flag, List<String> itemNames) {
+        if(flag == null){
+            return new Success<>("");
+        }
 
         if (!"--ord".equals(flag.getKey())) {
             return new Error("Unrecognized flag " + flag.getKey());
