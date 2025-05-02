@@ -28,44 +28,36 @@ public final class ChangeDirectory implements Operation {
   }
 
   private Directory goToRoot(final Directory directory) {
-    Directory current = directory;
-    while (current.getParent() != null) {
-      current = current.getParent();
-    }
-    return current;
+      return directory.getParent() == null
+              ? directory
+              : goToRoot(directory.getParent());
   }
 
   private Result navigatePath(final Directory start, final String rawPath) {
-    // todo: el current deberia ser una copia del start, y debe mantenerse inmutabilidad
-    Directory current = start;
-
-    Directory foundDirectory = null;
-
     String[] parts = rawPath.split("/");
 
+    Optional<Directory> result = Optional.of(start);
+
     for (String part : parts) {
-      if (part.isEmpty() || part.equals(".")) {
-        continue;
-      }
-      if (part.equals("..")) {
-        if (current.getParent() != null) {
-          current = current.getParent();
-          foundDirectory = current;
-        } else {
-          return new Success<>("moved to directory '/'", current);
-        }
-        continue;
-      }
+          if (part.isEmpty() || part.equals(".")) {
+              continue;
+          }
 
-      Optional<Directory> maybeFs = FileSystemUtils.findDirectoryByName(current, part);
-      if (maybeFs.isEmpty()) {
-        return new Error("'" + part + "' directory does not exist");
-      }
+        result = result.map(current -> {
+            if (part.equals("..")) {
+                return current.getParent() != null ? current.getParent() : current;
+            } else {
+                return FileSystemUtils.findDirectoryByName(current, part).orElse(null);
+            }
+        });
 
-      foundDirectory = maybeFs.get();
+          if (result.isEmpty()) {
+              return new Error("'" + part + "' directory does not exist");
+          }
     }
 
-    assert foundDirectory != null;
+    Directory foundDirectory = result.get();
+
     return new Success<>("moved to directory '" + foundDirectory.getName() + "'", foundDirectory);
   }
 }

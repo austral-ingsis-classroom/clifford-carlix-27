@@ -1,6 +1,10 @@
 package edu.austral.ingsis.clifford;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static edu.austral.ingsis.clifford.FileSystemUtils.findFileSystem;
 
 public final class Remove implements Operation {
 
@@ -14,9 +18,8 @@ public final class Remove implements Operation {
   public Result applyTo(Directory directory) {
 
     String targetName = flag.getValue();
-    // fixme: look this! tenes que usar el FileSystemUTils. Aca hay que chequear si el targetName
-    // refiere a un Directory o File.
-    Optional<FileSystem> maybeTarget = directory.find(targetName);
+
+    Optional<FileSystem> maybeTarget = findFileSystem(directory, targetName);
 
     if (maybeTarget.isEmpty()) {
       return new Error("Item '" + targetName + "' not found");
@@ -28,14 +31,21 @@ public final class Remove implements Operation {
       return new Error("Cannot remove directory '" + targetName + "' without recursive flag");
     }
 
-    Directory updatedDirectory = directory.removeItem(target);
-    // Directory updatedHierarchy = updatedDirectory.propagateChange();
+    Directory updatedDirectory = removeItem(directory, target);
 
     return new Success<>("'" + targetName + "' removed", updatedDirectory);
   }
 
   @Override
   public Result applyTo(File file) {
-    return new Error("Remove not implemented yet");
+    return new Error("Not applicable");
   }
+
+
+  private Directory removeItem(final Directory directory, FileSystem target) {
+      List<FileSystem> newItems = new ArrayList<>(directory.getItems());
+      newItems.remove(target);
+      return new Directory(directory.getName(), directory.getParent(), newItems);
+  }
+
 }

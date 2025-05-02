@@ -1,12 +1,13 @@
 package edu.austral.ingsis;
 
-import static java.util.Map.entry;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import edu.austral.ingsis.clifford.*;
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
+
+import static java.util.Map.entry;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileSystemTests {
 
@@ -38,10 +39,6 @@ public class FileSystemTests {
             entry("ls --ord=asc", "emily horace")));
   }
 
-  // todo list
-  // cd -> inmutabilidad
-  // pwd -> inmutabilidad
-  // touch
 
   @Test
   void test2() {
@@ -58,10 +55,6 @@ public class FileSystemTests {
             entry("ls", "elizabeth.txt t-bone")));
   }
 
-  // todo list
-  // cd
-  // rm
-  // rm --recursive
 
   @Test
   void test3() {
@@ -81,26 +74,21 @@ public class FileSystemTests {
             entry("ls", "")));
   }
 
-  // todo list
-  // cd
-  // pwd
 
-  //    @Test
-  //    void test4() {
-  //      executeTest(
-  //          List.of(
-  //              entry("mkdir horace", "'horace' directory created"),
-  //              entry("mkdir emily", "'emily' directory created"),
-  //              entry("cd horace", "moved to directory 'horace'"),
-  //              entry("mkdir jetta", "'jetta' directory created"),
-  //              entry("cd ..", "moved to directory '/'"), // fixme: el error esta aca por no
-  // mantener los directorios anteriores
-  //              entry("cd horace/jetta", "moved to directory 'jetta'"),
-  //              entry("pwd", "/horace/jetta"),
-  //              entry("cd /", "moved to directory '/'")));
-  //    }
+    @Test
+    void test4() {
+        executeTest(
+            List.of(
+                entry("mkdir horace", "'horace' directory created"),
+                entry("mkdir emily", "'emily' directory created"),
+                entry("cd horace", "moved to directory 'horace'"),
+                entry("mkdir jetta", "'jetta' directory created"),
+                entry("cd ..", "moved to directory '/'"), 
+                entry("cd horace/jetta", "moved to directory 'jetta'"),
+                entry("pwd", "/horace/jetta"),
+                entry("cd /", "moved to directory '/'")));
+      }
 
-  // todo list
 
   @Test
   void test5() {
@@ -115,8 +103,6 @@ public class FileSystemTests {
     executeTest(List.of(entry("cd ..", "moved to directory '/'")));
   }
 
-  // todo list
-  // rm
 
   @Test
   void test7() {
@@ -131,8 +117,6 @@ public class FileSystemTests {
             entry("ls", "jetta.txt")));
   }
 
-  // todo list
-  // rm
   @Test
   void test8() {
     executeTest(

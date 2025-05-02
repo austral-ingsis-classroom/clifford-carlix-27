@@ -14,6 +14,7 @@ public final class ListItems implements Operation {
 
   @Override
   public Result applyTo(Directory directory) {
+
     List<FileSystem> items = directory.getItems();
 
     List<String> itemNames = getFileAndDirectoryNames(items);

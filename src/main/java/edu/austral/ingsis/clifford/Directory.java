@@ -2,7 +2,6 @@ package edu.austral.ingsis.clifford;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public final class Directory implements FileSystem {
   private final String name;
@@ -33,67 +32,10 @@ public final class Directory implements FileSystem {
     return items;
   }
 
-  public Directory addItem(FileSystem item) {
-    List<FileSystem> newItems = new ArrayList<>(this.items);
-    newItems.add(item);
-    return new Directory(this.name, this.parent, newItems);
-  }
-
-  public Directory removeItem(FileSystem item) {
-    List<FileSystem> newItems = new ArrayList<>(this.items);
-    newItems.remove(item);
-    return new Directory(this.name, this.parent, newItems);
-  }
-
-  public Optional<FileSystem> find(String name) {
-    if (items.isEmpty()) return Optional.empty();
-
-    return items.stream()
-        .filter(
-            fs -> {
-              if (fs instanceof Directory d) return d.getName().equals(name);
-              if (fs instanceof File f) return f.getName().equals(name);
-              return false;
-            })
-        .findFirst();
-  }
-
-  public Directory propagateChange() {
-    if (parent == null) {
-      return this;
-    }
-    Directory newParent = parent.replaceChild(this, this);
-    return newParent.propagateChange();
-  }
-
   @Override
   public Result apply(Operation operation) {
     return operation.applyTo(this);
   }
 
-  // estos metodos deben dejar de existir aca. Se rompe el principio de S
-  public Directory propagateChanges(Directory changedDirectory) {
-    if (changedDirectory.getParent() == null) {
-      return changedDirectory;
-    }
 
-    Directory parent = changedDirectory.getParent();
-
-    Directory newParent = parent.replaceChild(this, changedDirectory);
-
-    return propagateChanges(newParent);
-  }
-
-  public Directory replaceChild(Directory oldChild, Directory newChild) {
-    List<FileSystem> newItems = new ArrayList<>();
-
-    for (FileSystem item : this.items) {
-      if (item.equals(oldChild)) {
-        newItems.add(newChild);
-      } else {
-        newItems.add(item);
-      }
-    }
-    return new Directory(this.name, this.parent, newItems);
-  }
 }
