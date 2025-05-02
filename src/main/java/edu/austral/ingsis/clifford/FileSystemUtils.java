@@ -31,15 +31,18 @@ public class FileSystemUtils {
 
 
 
+  // todo: este metodo por como funciona hace que el resto del codigo deba corregirse.
     public static Directory addDirectory(Directory dir, Directory parentDirectory){
         Directory newDirWithCorrectParent = new Directory(dir.getName(), parentDirectory);
 
         List<FileSystem> newItems = replaceItem(parentDirectory.getItems(), newDirWithCorrectParent);
 
-        Directory updatedParent = new Directory(parentDirectory.getName(), parentDirectory.getParent(), newItems);
+        Directory updatedParent = new Directory(parentDirectory.getName(), parentDirectory.getParent(), newItems); // emily actualizado
 
         // propagateChange da los cambios para el resto del arbol de fileSystem.
-        return propagateChange(updatedParent); // devuelve el root actualizado. Pero queda ahi en root rompiendo la logica que predomina por el cd.
+        Directory updatedRoot = propagateChange(updatedParent);
+
+        return updatedRoot; // root actualizado
     }
 
     private static Directory propagateChange(Directory directory) {
