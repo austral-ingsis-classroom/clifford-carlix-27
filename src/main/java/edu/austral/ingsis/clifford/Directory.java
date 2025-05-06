@@ -29,19 +29,18 @@ public final class Directory implements FileSystem {
   }
 
   public List<String> getAbsolutePath() {
-       List<String> path = new ArrayList<>();
-       Directory dir = this;
+    List<String> path = new ArrayList<>();
+    Directory dir = this;
 
-       while (dir != null) {
-            path.addFirst(dir.getName());
-            dir = dir.getParent();
-       }
+    while (dir != null) {
+      path.add(0, dir.getName());
+      dir = dir.getParent();
+    }
 
-       return path;
+    return path;
   }
 
-
-    public List<FileSystem> getItems() {
+  public List<FileSystem> getItems() {
     return items;
   }
 
@@ -49,6 +48,4 @@ public final class Directory implements FileSystem {
   public Result apply(Operation operation) {
     return operation.applyTo(this);
   }
-
-
 }

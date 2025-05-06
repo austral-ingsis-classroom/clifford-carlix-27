@@ -41,11 +41,9 @@ public final class Remove implements Operation {
     return new Error("Not applicable");
   }
 
-
   private Directory removeItem(final Directory directory, FileSystem target) {
-      List<FileSystem> newItems = new ArrayList<>(directory.getItems());
-      newItems.remove(target);
-      return new Directory(directory.getName(), directory.getParent(), newItems);
+    List<FileSystem> newItems = new ArrayList<>(directory.getItems());
+    newItems.remove(target);
+    return new Directory(directory.getName(), directory.getParent(), newItems);
   }
-
 }

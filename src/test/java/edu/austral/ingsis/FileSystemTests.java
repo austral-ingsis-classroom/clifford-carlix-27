@@ -11,13 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileSystemTests {
 
-
   private final FileSystemRunner runner =
       new FileSystemRunnerImpl(
           List.of(new Ls(), new MkDir(), new Cd(), new Pwd(), new Touch(), new Rm()));
 
   private void executeTest(List<Map.Entry<String, String>> commandsAndResults) {
-     final List<String> commands = commandsAndResults.stream().map(Map.Entry::getKey).toList();
+    final List<String> commands = commandsAndResults.stream().map(Map.Entry::getKey).toList();
     final List<String> expectedResult =
         commandsAndResults.stream().map(Map.Entry::getValue).toList();
 
@@ -38,7 +37,6 @@ public class FileSystemTests {
             entry("ls --ord=asc", "emily horace")));
   }
 
-
   @Test
   void test2() {
     executeTest(
@@ -53,7 +51,6 @@ public class FileSystemTests {
             entry("mkdir t-bone", "'t-bone' directory created"),
             entry("ls", "elizabeth.txt t-bone")));
   }
-
 
   @Test
   void test3() {
@@ -73,21 +70,19 @@ public class FileSystemTests {
             entry("ls", "")));
   }
 
-
-    @Test
-    void test4() {
-        executeTest(
-            List.of(
-                entry("mkdir horace", "'horace' directory created"),
-                entry("mkdir emily", "'emily' directory created"),
-                entry("cd horace", "moved to directory 'horace'"),
-                entry("mkdir jetta", "'jetta' directory created"),
-                entry("cd ..", "moved to directory '/'"),
-                entry("cd horace/jetta", "moved to directory 'jetta'"),
-                entry("pwd", "/horace/jetta"),
-                entry("cd /", "moved to directory '/'")));
-      }
-
+  @Test
+  void test4() {
+    executeTest(
+        List.of(
+            entry("mkdir horace", "'horace' directory created"),
+            entry("mkdir emily", "'emily' directory created"),
+            entry("cd horace", "moved to directory 'horace'"),
+            entry("mkdir jetta", "'jetta' directory created"),
+            entry("cd ..", "moved to directory '/'"),
+            entry("cd horace/jetta", "moved to directory 'jetta'"),
+            entry("pwd", "/horace/jetta"),
+            entry("cd /", "moved to directory '/'")));
+  }
 
   @Test
   void test5() {
@@ -101,7 +96,6 @@ public class FileSystemTests {
   void test6() {
     executeTest(List.of(entry("cd ..", "moved to directory '/'")));
   }
-
 
   @Test
   void test7() {

@@ -1,6 +1,5 @@
 package edu.austral.ingsis.clifford;
 
-
 public class PrintWorkingDirectory implements Operation {
 
   @Override
@@ -15,12 +14,12 @@ public class PrintWorkingDirectory implements Operation {
   }
 
   private String buildPath(Directory directory) {
-      if(directory.getParent() == null){
-          return "/";
-      }
-      String parentPath = buildPath(directory.getParent());
-      return parentPath.equals("/")
-              ? parentPath + directory.getName()
-              : parentPath + "/" + directory.getName();
+    if (directory.getParent() == null) {
+      return "/";
+    }
+    String parentPath = buildPath(directory.getParent());
+    return parentPath.equals("/")
+        ? parentPath + directory.getName()
+        : parentPath + "/" + directory.getName();
   }
 }

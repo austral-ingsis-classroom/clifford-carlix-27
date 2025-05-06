@@ -14,17 +14,15 @@ public final class CreateDirectory implements Operation {
       return new Error("Invalid directory name: must not contain '/' or spaces");
     }
 
+    Directory newDir = new Directory(directoryName, directory);
 
-     Directory newDir = new Directory(directoryName, directory);
+    Directory updatedDirectory = FileSystemUtils.addDirectory(newDir, directory);
 
-     Directory updatedDirectory = FileSystemUtils.addDirectory(newDir, directory);
-
-     return new Success<>("'" + newDir.getName() + "' directory created", updatedDirectory);
+    return new Success<>("'" + newDir.getName() + "' directory created", updatedDirectory);
   }
 
   @Override
   public Result applyTo(File file) {
     return new Error("Cannot create a directory inside a file");
   }
-
 }

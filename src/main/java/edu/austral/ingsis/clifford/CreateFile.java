@@ -33,6 +33,4 @@ public final class CreateFile implements Operation {
   public Result applyTo(File file) {
     return new Error("");
   }
-
-
 }

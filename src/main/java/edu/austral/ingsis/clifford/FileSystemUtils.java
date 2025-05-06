@@ -15,92 +15,88 @@ public class FileSystemUtils {
         .findFirst();
   }
 
-  public static Optional<FileSystem> findFileSystem(Directory dir, String name){
-      if(dir.getItems().isEmpty()) return Optional.empty();
+  public static Optional<FileSystem> findFileSystem(Directory dir, String name) {
+    if (dir.getItems().isEmpty()) return Optional.empty();
 
-      return dir.getItems().stream()
-              .filter(
-                      fs -> {
-                          if (fs instanceof Directory d) return d.getName().equals(name);
-                          if (fs instanceof File f) return f.getName().equals(name);
-                          return false;
-                      })
-              .findFirst();
+    return dir.getItems().stream()
+        .filter(
+            fs -> {
+              if (fs instanceof Directory d) return d.getName().equals(name);
+              if (fs instanceof File f) return f.getName().equals(name);
+              return false;
+            })
+        .findFirst();
   }
 
+  public static Directory findDirectoryByPath(Directory root, List<String> pathParts) {
+    Directory current = root;
 
-    public static Directory findDirectoryByPath(Directory root, List<String> pathParts) {
-      Directory current = root;
+    for (String part : pathParts) {
+      if (part.equals("/")) continue; // Ignoramos la raíz explícita
 
-      for (String part : pathParts) {
-            if (part.equals("/")) continue; // Ignoramos la raíz explícita
-
-            boolean found = false;
-            for (FileSystem item : current.getItems()) {
-                if (item instanceof Directory dir && dir.getName().equals(part)) {
-                    current = dir;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) throw new RuntimeException("Path not found: " + String.join("/", pathParts));
+      boolean found = false;
+      for (FileSystem item : current.getItems()) {
+        if (item instanceof Directory dir && dir.getName().equals(part)) {
+          current = dir;
+          found = true;
+          break;
         }
+      }
 
-        return current;
+      if (!found) throw new RuntimeException("Path not found: " + String.join("/", pathParts));
     }
 
-
-    public static Directory addDirectoryWithChangesInCdCommandInCdToRootCase(Directory dir, Directory root){
-        Directory newRootDirWithCorrectChanges = new Directory(dir.getName(), root, dir.getItems());
-
-        List<FileSystem> newItems = List.of(newRootDirWithCorrectChanges);
-
-        Directory updatedRoot = new Directory(root.getName(), root.getParent(), newItems);
-
-        return updatedRoot;
-    }
-
-    public static Directory addDirectory(Directory dir, Directory parentDirectory){
-        Directory newDirWithCorrectParent = new Directory(dir.getName(), parentDirectory);
-
-        List<FileSystem> newItems = replaceItem(parentDirectory.getItems(), newDirWithCorrectParent);
-
-        Directory updatedParent = new Directory(parentDirectory.getName(), parentDirectory.getParent(), newItems);
-
-        Directory updatedRoot = propagateChange(updatedParent);
-
-        return updatedRoot;
-    }
-
-    private static Directory propagateChange(Directory directory) {
-        if (directory.getParent() == null) return directory;
-
-        Directory parent = directory.getParent();
-
-        // replaceitem lo que hace es actualizar los hijos del filesystem en relacion al directory que modificamos.
-        List<FileSystem> newItems = replaceItem(parent.getItems(), directory);
-
-        Directory updatedParent = new Directory(parent.getName(), parent.getParent(), newItems);
-
-        return propagateChange(updatedParent);
-    }
-
-    public static List<FileSystem> replaceItem(List<FileSystem> items, FileSystem updatedItem) {
-        return Stream.concat(
-                items.stream().filter(item -> !item.getName().equals(updatedItem.getName())),
-                Stream.of(updatedItem)
-        ).collect(Collectors.toList());
-    }
-
-
-
-
-    public static Directory addFile(Directory directory, File file) {
-        List<FileSystem> newItems = new ArrayList<>(directory.getItems());
-        newItems.add(file);
-        return new Directory(directory.getName(), directory.getParent(), newItems);
+    return current;
   }
 
+  public static Directory addDirectoryWithChangesInCdCommandInCdToRootCase(
+      Directory dir, Directory root) {
+    Directory newRootDirWithCorrectChanges = new Directory(dir.getName(), root, dir.getItems());
 
+    List<FileSystem> newItems = List.of(newRootDirWithCorrectChanges);
+
+    Directory updatedRoot = new Directory(root.getName(), root.getParent(), newItems);
+
+    return updatedRoot;
+  }
+
+  public static Directory addDirectory(Directory dir, Directory parentDirectory) {
+    Directory newDirWithCorrectParent = new Directory(dir.getName(), parentDirectory);
+
+    List<FileSystem> newItems = replaceItem(parentDirectory.getItems(), newDirWithCorrectParent);
+
+    Directory updatedParent =
+        new Directory(parentDirectory.getName(), parentDirectory.getParent(), newItems);
+
+    Directory updatedRoot = propagateChange(updatedParent);
+
+    return updatedRoot;
+  }
+
+  private static Directory propagateChange(Directory directory) {
+    if (directory.getParent() == null) return directory;
+
+    Directory parent = directory.getParent();
+
+    // replaceitem lo que hace es actualizar los hijos del filesystem en relacion al directory que
+    // modificamos.
+    List<FileSystem> newItems = replaceItem(parent.getItems(), directory);
+
+    Directory updatedParent = new Directory(parent.getName(), parent.getParent(), newItems);
+
+    return propagateChange(updatedParent);
+  }
+
+  public static List<FileSystem> replaceItem(List<FileSystem> items, FileSystem updatedItem) {
+    return Stream.concat(
+            items.stream().filter(item -> !item.getName().equals(updatedItem.getName())),
+            Stream.of(updatedItem))
+        .collect(Collectors.toList());
+  }
+
+  public static Directory addFile(Directory directory, File file) {
+    List<FileSystem> newItems = new ArrayList<>(directory.getItems());
+    newItems.add(file);
+    return new Directory(directory.getName(), directory.getParent(), newItems);
+  }
 }

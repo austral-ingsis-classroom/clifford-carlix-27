@@ -19,7 +19,7 @@ public final class Rm implements Command {
       // no hay flag, entonces si el target es un directorio debemos mostrar el mensaje de error
       // adecuado
       if (fileSystem instanceof Directory dir) {
-          Optional<Directory> maybeTarget = FileSystemUtils.findDirectoryByName(dir, targetName);
+        Optional<Directory> maybeTarget = FileSystemUtils.findDirectoryByName(dir, targetName);
         if (maybeTarget.isPresent()) {
           return new Success<>("cannot remove '" + targetName + "', is a directory");
         }
