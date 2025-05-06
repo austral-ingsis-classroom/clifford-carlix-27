@@ -4,6 +4,7 @@ public final class Cd implements Command {
 
   @Override
   public Result execute(String input, FileSystem fileSystem) {
+    // fileSystem viene con el directory correcto. que se pasa en el changedirectory
     String path = extractPath(input);
     if (path.isEmpty()) {
       return new Error("Path is empty");

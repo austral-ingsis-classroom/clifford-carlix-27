@@ -30,21 +30,32 @@ public class FileSystemRunnerImpl implements FileSystemRunner {
     for (String commandString : commands) {
       Result result = commandRunner.run(commandString, current);
 
+      // el success tiene el directory correcto con las modificaciones correctas. Digamos, el success.value tiene los cambios correctos.
       if (result instanceof Success<?> success) {
         Object value = success.getValue();
 
           if (value instanceof Directory updatedDir) {
-              // Detectamos si el root cambio (ej: mkdir, rm, etc.)
-              if (updatedDir.getParent() == null) {
+              String trimmedCommand = commandString.trim();
+
+              if (trimmedCommand.equals("cd ..")) {
+                  // actualizo el current al dir con las correcciones correctas
+                  this.current = updatedDir;
+              } else if (trimmedCommand.equals("cd /")){
+                  this.current = root;
+              } else if (updatedDir.getParent() == null ) {
+                  // Root fue modificado por mkdir, rm, etc.
                   this.root = updatedDir;
-                  this.current = new FileSystemUtils().findDirectoryByPath(root, currentPath);
+                  // fixme: rompe en la ultima parte esto!
+                  this.current = FileSystemUtils.findDirectoryByPath(root, currentPath);
               } else {
-                  // Si fue un cambio de directorio, actualizamos current y el path
+                  // Cambio de directorio normal (cd <dir>)
                   this.current = updatedDir;
                   this.currentPath = updatedDir.getAbsolutePath();
               }
+
           }
       }
+
 
       results.add(formatResult(result));
     }

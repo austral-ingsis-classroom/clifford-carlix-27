@@ -83,7 +83,7 @@ public class FileSystemTests {
                 entry("mkdir emily", "'emily' directory created"),
                 entry("cd horace", "moved to directory 'horace'"),
                 entry("mkdir jetta", "'jetta' directory created"),
-                entry("cd ..", "moved to directory '/'"), 
+                entry("cd ..", "moved to directory '/'"),
                 entry("cd horace/jetta", "moved to directory 'jetta'"),
                 entry("pwd", "/horace/jetta"),
                 entry("cd /", "moved to directory '/'")));
