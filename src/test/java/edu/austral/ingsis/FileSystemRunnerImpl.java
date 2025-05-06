@@ -1,7 +1,8 @@
 package edu.austral.ingsis;
 
-import edu.austral.ingsis.clifford.*;
 import edu.austral.ingsis.clifford.Error;
+import edu.austral.ingsis.clifford.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,11 +10,17 @@ public class FileSystemRunnerImpl implements FileSystemRunner {
 
   private final CommandRunner commandRunner;
 
+  private Directory root;
+
   private Directory current;
 
-  public FileSystemRunnerImpl(List<Command> availableCommands) {
+  private List<String> currentPath;
+
+    public FileSystemRunnerImpl(List<Command> availableCommands) {
     this.commandRunner = new CommandRunner(availableCommands);
-    this.current = new Directory("/", null);
+    this.root = new Directory("/", null);
+    this.current = root;
+    this.currentPath = List.of("/");
   }
 
   @Override
@@ -23,8 +30,20 @@ public class FileSystemRunnerImpl implements FileSystemRunner {
     for (String commandString : commands) {
       Result result = commandRunner.run(commandString, current);
 
-      if (result instanceof Success<?> success && success.getValue() instanceof Directory dir) {
-        current = dir;
+      if (result instanceof Success<?> success) {
+        Object value = success.getValue();
+
+          if (value instanceof Directory updatedDir) {
+              // Detectamos si el root cambio (ej: mkdir, rm, etc.)
+              if (updatedDir.getParent() == null) {
+                  this.root = updatedDir;
+                  this.current = new FileSystemUtils().findDirectoryByPath(root, currentPath);
+              } else {
+                  // Si fue un cambio de directorio, actualizamos current y el path
+                  this.current = updatedDir;
+                  this.currentPath = updatedDir.getAbsolutePath();
+              }
+          }
       }
 
       results.add(formatResult(result));

@@ -28,7 +28,20 @@ public final class Directory implements FileSystem {
     return parent;
   }
 
-  public List<FileSystem> getItems() {
+  public List<String> getAbsolutePath() {
+       List<String> path = new ArrayList<>();
+       Directory dir = this;
+
+       while (dir != null) {
+            path.addFirst(dir.getName());
+            dir = dir.getParent();
+       }
+
+       return path;
+  }
+
+
+    public List<FileSystem> getItems() {
     return items;
   }
 

@@ -11,14 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileSystemTests {
 
-  // private final FileSystemRunner runner = commands -> List.of();
 
   private final FileSystemRunner runner =
       new FileSystemRunnerImpl(
           List.of(new Ls(), new MkDir(), new Cd(), new Pwd(), new Touch(), new Rm()));
 
   private void executeTest(List<Map.Entry<String, String>> commandsAndResults) {
-    final List<String> commands = commandsAndResults.stream().map(Map.Entry::getKey).toList();
+     final List<String> commands = commandsAndResults.stream().map(Map.Entry::getKey).toList();
     final List<String> expectedResult =
         commandsAndResults.stream().map(Map.Entry::getValue).toList();
 
@@ -75,6 +74,7 @@ public class FileSystemTests {
   }
 
 
+  // todo: no entiendo porque motivo no esta manteniendo el root actualizado.
     @Test
     void test4() {
         executeTest(

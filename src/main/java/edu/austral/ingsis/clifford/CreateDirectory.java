@@ -17,7 +17,7 @@ public final class CreateDirectory implements Operation {
 
      Directory newDir = new Directory(directoryName, directory);
 
-     Directory updatedDirectory = FileSystemUtils.addDirectory(newDir, directory); // actualizo el root.
+     Directory updatedDirectory = FileSystemUtils.addDirectory(newDir, directory);
 
 
      return new Success<>("'" + newDir.getName() + "' directory created", updatedDirectory);

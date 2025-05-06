@@ -28,10 +28,30 @@ public class FileSystemUtils {
               .findFirst();
   }
 
+    public Directory findDirectoryByPath(Directory root, List<String> pathParts) {
+        Directory current = root;
+
+        for (String part : pathParts) {
+            if (part.equals("/")) continue; // Ignoramos la raíz explícita
+
+            boolean found = false;
+            for (FileSystem item : current.getItems()) {
+                if (item instanceof Directory dir && dir.getName().equals(part)) {
+                    current = dir;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) throw new RuntimeException("Path not found: " + String.join("", pathParts));
+        }
+
+        return current;
+    }
 
 
 
-  // todo: este metodo por como funciona hace que el resto del codigo deba corregirse.
+
     public static Directory addDirectory(Directory dir, Directory parentDirectory){
         Directory newDirWithCorrectParent = new Directory(dir.getName(), parentDirectory);
 
@@ -39,10 +59,10 @@ public class FileSystemUtils {
 
         Directory updatedParent = new Directory(parentDirectory.getName(), parentDirectory.getParent(), newItems); // emily actualizado
 
-        // propagateChange da los cambios para el resto del arbol de fileSystem.
+
         Directory updatedRoot = propagateChange(updatedParent);
 
-        return updatedRoot; // root actualizado
+        return updatedRoot; // root actualizado, emily actualizado
     }
 
     private static Directory propagateChange(Directory directory) {
