@@ -74,7 +74,6 @@ public class FileSystemTests {
   }
 
 
-  // todo: no entiendo porque motivo no esta manteniendo el root actualizado.
     @Test
     void test4() {
         executeTest(

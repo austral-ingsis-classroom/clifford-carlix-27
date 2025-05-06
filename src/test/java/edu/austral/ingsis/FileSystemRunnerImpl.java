@@ -45,7 +45,6 @@ public class FileSystemRunnerImpl implements FileSystemRunner {
               } else if (updatedDir.getParent() == null ) {
                   // Root fue modificado por mkdir, rm, etc.
                   this.root = updatedDir;
-                  // fixme: rompe en la ultima parte esto!
                   this.current = FileSystemUtils.findDirectoryByPath(root, currentPath);
               } else {
                   // Cambio de directorio normal (cd <dir>)

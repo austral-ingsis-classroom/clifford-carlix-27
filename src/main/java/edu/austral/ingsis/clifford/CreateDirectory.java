@@ -19,8 +19,6 @@ public final class CreateDirectory implements Operation {
 
      Directory updatedDirectory = FileSystemUtils.addDirectory(newDir, directory);
 
-     // el updatedDirectory. Tiene tanto a horace como a jetta como subdirectorios.
-
      return new Success<>("'" + newDir.getName() + "' directory created", updatedDirectory);
   }
 
