@@ -1,10 +1,10 @@
 package edu.austral.ingsis.clifford;
 
+import static edu.austral.ingsis.clifford.FileSystemUtils.findFileSystem;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static edu.austral.ingsis.clifford.FileSystemUtils.findFileSystem;
 
 public final class Remove implements Operation {
 
